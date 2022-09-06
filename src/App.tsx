@@ -1,4 +1,4 @@
-import { ChangeEvent, MouseEventHandler, useState } from "react";
+import React, { ChangeEvent, MouseEventHandler, useState } from "react";
 import Contact from "./components/Contact";
 import ContactInterface from "./interface/Contacts"
 import { useAddContactMutation, useGetAllContactsQuery, useGetContactByIdQuery } from "./services/contactsApi"
@@ -6,8 +6,6 @@ import { useAddContactMutation, useGetAllContactsQuery, useGetContactByIdQuery }
 function App() {
 
   const [displayedContact, setDisplayedContact] = useState<ContactInterface | null>({} as ContactInterface)
-
-
   const { isLoading, data, error } = useGetAllContactsQuery();
   const [contact, setContact] = useState({} as ContactInterface)
   const [addContact] = useAddContactMutation()
@@ -20,6 +18,9 @@ function App() {
     setContact(prev => ({ ...prev, [e.target.name]: e.target.value }))
   }
 
+  const [id, setId] = useState(0);
+  const {data:dataById} = useGetContactByIdQuery(id);
+
   return (
     <div className="App">
       <div style={{ display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column" }}>
@@ -28,19 +29,17 @@ function App() {
         <input type={"email"} name="email" value={contact.email} onChange={handleOnchange} />
 
         <button onClick={addNewContact}>Add new contact</button>
-
         {
-          displayedContact && <div>
-            <h1>displayed contact</h1>
-            <h5>{displayedContact.id}</h5>
-            <h5>{displayedContact.name}</h5>
-            <h5>{displayedContact.email}</h5>
-          </div>
+          dataById && 
+          <pre> 
+            {JSON.stringify(dataById, undefined, 2)}
+          </pre>
         }
+
       </div>
       {
         isLoading ? <h2>Loading....</h2> : error ? <h2>Something went wrong</h2> : data?.map(contact => (
-          <Contact data={contact} key={contact.id} setDisplayedContact={setDisplayedContact} />
+          <Contact data={contact} key={contact.id} setId={setId} />
         ))
       }
 

@@ -4,11 +4,10 @@ import { useUpdateContactMutation, useDeleteContactMutation, useGetContactByIdQu
 
 type contactProps = {
     data: ContactInterface,
-    setDisplayedContact:React.Dispatch<React.SetStateAction<ContactInterface | null>>
+    setId:React.Dispatch<React.SetStateAction<number>>
 }
 
-
-function Contact({ data, setDisplayedContact }: contactProps) {
+function Contact({ data, setId }: contactProps) {
     const { isLoading, data: contact, error } = useGetContactByIdQuery(data.id!);
 
     const [updateContact] = useUpdateContactMutation();
@@ -30,7 +29,7 @@ function Contact({ data, setDisplayedContact }: contactProps) {
     }
 
     const DisplayContactData = async () => {
-        setDisplayedContact(contact!)
+        setId(data.id!)
     }
 
     return (
