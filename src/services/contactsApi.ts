@@ -3,13 +3,21 @@ import Contact from '../interface/Contacts'
 
 const contactsApi = createApi({
     reducerPath: `contactApi`,
-    baseQuery: fetchBaseQuery({ baseUrl: `http://localhost:3006` }),
+
+    baseQuery: fetchBaseQuery({ baseUrl: `http://localhost:3006`, prepareHeaders: (headers) => {
+        /* to set a header in request */
+        headers.set('jwtheaders', JSON.stringify({
+            token: 'some value in header in rtk query'
+        }))
+        return headers;
+    } }),
     tagTypes: ['Contact'],
+
     endpoints: (builder) => ({
         getAllContacts: builder.query<Contact[], void>({ // void since we have not pass any parameter
             query: () => ({
                 url: '/contacts',
-                method: "GET"
+                method: "GET",
             }),
             providesTags: ['Contact']
         }),
