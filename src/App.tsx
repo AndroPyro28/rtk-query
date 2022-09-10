@@ -1,9 +1,23 @@
-import React, { ChangeEvent, MouseEventHandler, useState } from "react";
+import React, { ChangeEvent, MouseEventHandler, useEffect, useState } from "react";
 import Contact from "./components/Contact";
 import ContactInterface from "./interface/Contacts"
 import { useAddContactMutation, useGetAllContactsQuery, useGetContactByIdQuery } from "./services/contactsApi"
-
+import io from 'socket.io-client'
 function App() {
+
+  useEffect(() => {
+    const socket = io('http://localhost:3001/');
+    const body = {
+      name: 'andro eugenio',
+      age: 21,
+      gender: 'male'
+    }
+    socket.emit('newMessage', body)
+
+    socket.on('sendMessage', (body) => {
+     console.log(body);
+    })
+  }, [])
 
   const [displayedContact, setDisplayedContact] = useState<ContactInterface | null>({} as ContactInterface)
   const { isLoading, data, error } = useGetAllContactsQuery();
